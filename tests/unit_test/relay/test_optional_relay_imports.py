@@ -95,11 +95,9 @@ def test_import_failure_classification_and_selected_backend_errors(backend, fail
         if backend == 'mooncake':
             module.TransferEngine = forbidden
             connection = lambda: module.MooncakeConnection('direct', '127.0.0.1')
-            wheel = 'mooncake-transfer-engine-cuda13'
         else:
             module.nixl_agent_config = forbidden
             connection = lambda: package.Connection('direct')
-            wheel = 'nixl-cu13'
         callers = [
             connection,
             lambda: relay_class(engine_id='class', device='cpu', slot_size_mb=1, credits=1),
@@ -112,7 +110,7 @@ def test_import_failure_classification_and_selected_backend_errors(backend, fail
                 except RuntimeError as exc:
                     assert exc.__cause__ is original
                     assert backend in str(exc).lower()
-                    assert wheel in str(exc)
+                    assert 'installation requirements for your platform' in str(exc)
                 else:
                     raise AssertionError('unavailable backend constructed')
         assert attempts == before, 'construction retried dependency imports'

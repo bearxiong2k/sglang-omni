@@ -31,7 +31,10 @@ except ImportError as exc:
         backend="NIXL",
         error=exc,
         logger=logger,
-        install_hint="Check the chained import error and your platform's transport dependencies (CUDA 13 package: nixl-cu13).",
+        install_hint=(
+            "Check the chained import error and the backend installation "
+            "requirements for your platform."
+        ),
     )
 
 

@@ -29,7 +29,10 @@ except ImportError as exc:
         backend="Mooncake",
         error=exc,
         logger=logger,
-        install_hint="Check the chained import error and your platform's transport dependencies (CUDA 13 package: mooncake-transfer-engine-cuda13).",
+        install_hint=(
+            "Check the chained import error and the backend installation "
+            "requirements for your platform."
+        ),
     )
 
     # Mock classes
