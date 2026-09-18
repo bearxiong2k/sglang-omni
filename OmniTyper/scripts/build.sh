@@ -22,7 +22,9 @@ done
 /usr/libexec/PlistBuddy -c "Add :OmniTyperPython string $PYTHON_BIN" "$APP_BUNDLE/Contents/Info.plist"
 ICONSET="$APP_ROOT/.build/AppIcon.iconset"
 mkdir -p "$ICONSET"
-swift "$APP_ROOT/scripts/icon.swift" "$ICONSET"
+swiftc -sdk "$(xcrun --sdk macosx --show-sdk-path)" -target "$(uname -m)-apple-macosx14.0" \
+  "$APP_ROOT/scripts/icon.swift" -o "$APP_ROOT/.build/generate-icon"
+"$APP_ROOT/.build/generate-icon" "$ICONSET"
 iconutil -c icns "$ICONSET" -o "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
 if [[ "${CODE_SIGN_IDENTITY:--}" == "-" ]]; then
   echo "note: signing ad-hoc. macOS ties the Accessibility grant to this build, so" >&2
