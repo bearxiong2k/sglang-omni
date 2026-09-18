@@ -1,0 +1,34 @@
+{
+  "window-before.png": {
+    "source": "截屏2026-09-19 05.58.37.png",
+    "sha256": "541d3559236268b3f1b353aaf07bd92cb4385825179dc490cadf4c80a66812e8"
+  },
+  "window-after.png": {
+    "source": "截屏2026-09-19 05.58.40.png",
+    "sha256": "b5976aaaa0198bd06e218e3dbabd41e880ca27f73ac6e66c6516611a3d14f37a"
+  },
+  "controls-before.png": {
+    "source": "截屏2026-09-19 05.59.26.png",
+    "sha256": "32c1c29e12432e5953e20bc500f94e0758906b76f98cbe2d12fa323367a1fbf2"
+  },
+  "controls-after.png": {
+    "source": "截屏2026-09-19 05.59.52.png",
+    "sha256": "716cb2aa84bebe90ed387a9923fa993c8b971d212b90a0d8d1edaca0537dbfa6"
+  },
+  "model-before.png": {
+    "source": "截屏2026-09-19 06.00.45.png",
+    "sha256": "64426a31baf40cb4b9538802cb7a63a6146c939be035a5d4005318f7ee2182de"
+  },
+  "model-after.png": {
+    "source": "截屏2026-09-19 06.00.59.png",
+    "sha256": "ee015381cc8789315b40ac1a1e52ad4c559d4b11257b453e44a5cb43d451efe1"
+  },
+  "notifications-before.png": {
+    "source": "截屏2026-09-19 06.06.38.png",
+    "sha256": "1df24bd2b5c79d1956abcd5f3ad8d4c9421b850b803e87a2a60fa65e6ed9b7aa"
+  },
+  "notifications-after.png": {
+    "source": "截屏2026-09-19 06.06.06.png",
+    "sha256": "9fed3206851b989042c39da965dae40b4521e041e49ff8af97f2a35aee247030"
+  }
+}
