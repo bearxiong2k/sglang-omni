@@ -1,0 +1,38 @@
+{
+  "popup-interaction-before.gif": {
+    "source": "录屏2026-09-19 06.35.13.mov",
+    "source_sha256": "d2849d86792255fdac2c08a3b6203102b769eacf3f145641b99ef00ff8afb236",
+    "gif_sha256": "dcdfbb74f8b4ffd511e121541d46b488f81c77a47977202d094caa97919e1304",
+    "fps": 20,
+    "width": 1000,
+    "speed": "1x",
+    "bytes": 953524
+  },
+  "popup-interaction-after.gif": {
+    "source": "录屏2026-09-19 06.45.27.mov",
+    "source_sha256": "6e7d696c83b20ddd2e8314ef848050317ea4bf587fe8b24547707ca03778a7cb",
+    "gif_sha256": "f804f2024f2e212c2ec6da6b1cdbc584a68ba3a396dcd6eec3f70df866b80405",
+    "fps": 20,
+    "width": 1000,
+    "speed": "1x",
+    "bytes": 1897889
+  },
+  "disclosure-target-before.gif": {
+    "source": "录屏2026-09-19 06.46.17.mov",
+    "source_sha256": "b303f82431262963d76f2cb8810aee861bfdfb705f8332bc6aaafbcfdc36c735",
+    "gif_sha256": "79f04784b1e1c5379298b5fa84d1a55132383d5423270cc4641af2f997d3aa36",
+    "fps": 20,
+    "width": 1000,
+    "speed": "1x",
+    "bytes": 431680
+  },
+  "disclosure-target-after.gif": {
+    "source": "录屏2026-09-19 06.47.33.mov",
+    "source_sha256": "cb6df5e837f552722a909d080baf388333d49dd7d4b301cd08aedb77c3e7404f",
+    "gif_sha256": "720ca946bfe291453c4f9de31239272e6694d88ea8bf48709bad65b907c56ab0",
+    "fps": 20,
+    "width": 1000,
+    "speed": "1x",
+    "bytes": 558564
+  }
+}
