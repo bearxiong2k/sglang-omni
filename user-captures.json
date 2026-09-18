@@ -30,5 +30,9 @@
   "notifications-after.png": {
     "source": "截屏2026-09-19 06.06.06.png",
     "sha256": "9fed3206851b989042c39da965dae40b4521e041e49ff8af97f2a35aee247030"
+  },
+  "settings-blank-before.png": {
+    "source": "截屏2026-09-19 06.31.34.png",
+    "sha256": "343ffd823d3043812060699dbb420ddbe23f9ab192fde09d249c26c859c1fa1c"
   }
 }
