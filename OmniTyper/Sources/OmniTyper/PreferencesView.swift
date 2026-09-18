@@ -3,6 +3,7 @@ import AppKit
 import ServiceManagement
 import SwiftUI
 
+@MainActor
 struct PreferencesView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var store: AppStore

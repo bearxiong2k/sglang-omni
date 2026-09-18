@@ -24,6 +24,7 @@ enum Page: String, CaseIterable {
     }
 }
 
+@MainActor
 struct RootView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var store: AppStore

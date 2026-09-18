@@ -14,7 +14,7 @@ project and is not affiliated with Typeless.
 ## Requirements
 
 - macOS 14 or later on Apple Silicon.
-- Xcode Command Line Tools and a Swift 6 toolchain for both building and testing.
+- Xcode Command Line Tools and a Swift 6.2 or newer toolchain.
 - Homebrew, installed before running setup.
 - At least 16 GB of memory is recommended, plus several GB of free disk space for
   the Python environment and model weights.
@@ -274,6 +274,9 @@ OMNITYPER_PYTHON=/absolute/path/to/python bash OmniTyper/scripts/build.sh
 
 # Build a debug version.
 CONFIGURATION=debug bash OmniTyper/scripts/build.sh
+
+# Regenerate the checked-in icon after changing scripts/icon.swift.
+bash OmniTyper/scripts/generate-icon.sh
 
 # Run unit and integration tests without model downloads or microphone access.
 bash OmniTyper/scripts/test.sh

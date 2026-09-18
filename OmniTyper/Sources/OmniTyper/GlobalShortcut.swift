@@ -36,7 +36,7 @@ final class GlobalShortcut {
         return flags.rawValue & mask
     }
 
-    deinit {
+    isolated deinit {
         monitorTask?.cancel()
         if let source { CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .commonModes) }
         if let tap { CFMachPortInvalidate(tap) }

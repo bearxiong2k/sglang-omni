@@ -3,6 +3,7 @@ import AppKit
 import SwiftUI
 import UniformTypeIdentifiers
 
+@MainActor
 struct HistoryView: View {
     @ObservedObject var model: AppModel
     @ObservedObject var store: AppStore

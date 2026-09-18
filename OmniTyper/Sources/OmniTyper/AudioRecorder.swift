@@ -118,7 +118,7 @@ final class AudioRecorder: ObservableObject {
     private var generation = UUID()
     private var isStarting = false
 
-    deinit {
+    isolated deinit {
         meterTask?.cancel()
         if let configurationObserver { NotificationCenter.default.removeObserver(configurationObserver) }
         engine?.inputNode.removeTap(onBus: 0)

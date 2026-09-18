@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: Apache-2.0
 import AppKit
-import ApplicationServices
+// Note (Codex): AX's permission-option constant is imported as a mutable C global.
+@preconcurrency import ApplicationServices
 import Carbon
 
 enum TextInsertionError: LocalizedError {
@@ -57,7 +58,8 @@ enum TextInsertion {
         activationObserver = center.addObserver(forName: NSWorkspace.didActivateApplicationNotification,
                                                 object: nil, queue: .main) { note in
             guard let app = note.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication else { return }
-            MainActor.assumeIsolated { requestManualAccessibility(app.processIdentifier) }
+            let pid = app.processIdentifier
+            MainActor.assumeIsolated { requestManualAccessibility(pid) }
         }
         if let app = NSWorkspace.shared.frontmostApplication { requestManualAccessibility(app.processIdentifier) }
     }

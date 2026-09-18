@@ -68,7 +68,7 @@ final class WorkerClient: ObservableObject {
                         self.failAndStop(Failure("worker.timedOut"))
                     }
                     // Note (Codex): A blocked worker must not block the UI thread writing its pipe.
-                    DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+                    DispatchQueue.global(qos: .userInitiated).async { [weak self, data] in
                         do { try input.write(contentsOf: data) }
                         catch {
                             DispatchQueue.main.async {
@@ -229,7 +229,7 @@ final class WorkerClient: ObservableObject {
         }
     }
 
-    private func finish(_ result: Result<[String: Any], Error>) {
+    private func finish(_ result: sending Result<[String: Any], Error>) {
         guard let pending else { return }
         self.pending = nil
         timeoutTask?.cancel()

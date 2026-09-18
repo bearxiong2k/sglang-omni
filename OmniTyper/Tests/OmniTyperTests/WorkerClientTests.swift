@@ -128,7 +128,7 @@ struct WorkerClientTests {
             _ = try await client.request(["op": "echo"], python: python)
         }
 
-        let waiting = Task { try await client.request(["op": "sleep"], python: python) }
+        let waiting = Task { _ = try await client.request(["op": "sleep"], python: python) }
         for _ in 0..<100 {
             if client.status == "waiting" { break }
             try await Task.sleep(nanoseconds: 20_000_000)
@@ -140,7 +140,7 @@ struct WorkerClientTests {
         } catch { #expect(error.localizedDescription.contains("busy")) }
         waiting.cancel()
         do {
-            _ = try await waiting.value
+            try await waiting.value
             Issue.record("Cancellation must resume the outstanding request")
         } catch { #expect(error is CancellationError) }
         #expect(!client.isRunning)

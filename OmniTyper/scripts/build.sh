@@ -10,6 +10,7 @@ APP_BUNDLE="$APP_ROOT/dist/OmniTyper.app"
 mkdir -p "$APP_BUNDLE/Contents/MacOS" "$APP_BUNDLE/Contents/Resources/backend"
 cp "$BIN_DIR/OmniTyper" "$APP_BUNDLE/Contents/MacOS/"
 cp "$APP_ROOT/Resources/Info.plist" "$APP_BUNDLE/Contents/Info.plist"
+cp "$APP_ROOT/Resources/AppIcon.icns" "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
 cp "$APP_ROOT/backend/worker.py" "$APP_ROOT/backend/server.py" "$APP_ROOT/backend/text_api.py" "$APP_BUNDLE/Contents/Resources/backend/"
 rm -rf "$APP_BUNDLE/Contents/Resources/backend/__pycache__"
 cp "$APP_ROOT/../LICENSE" "$APP_BUNDLE/Contents/Resources/LICENSE"
@@ -20,12 +21,6 @@ for LPROJ in "$APP_ROOT"/Sources/OmniTyper/Resources/*.lproj; do
   cp -R "$LPROJ" "$APP_BUNDLE/Contents/Resources/"
 done
 /usr/libexec/PlistBuddy -c "Add :OmniTyperPython string $PYTHON_BIN" "$APP_BUNDLE/Contents/Info.plist"
-ICONSET="$APP_ROOT/.build/AppIcon.iconset"
-mkdir -p "$ICONSET"
-swiftc -sdk "$(xcrun --sdk macosx --show-sdk-path)" -target "$(uname -m)-apple-macosx14.0" \
-  "$APP_ROOT/scripts/icon.swift" -o "$APP_ROOT/.build/generate-icon"
-"$APP_ROOT/.build/generate-icon" "$ICONSET"
-iconutil -c icns "$ICONSET" -o "$APP_BUNDLE/Contents/Resources/AppIcon.icns"
 if [[ "${CODE_SIGN_IDENTITY:--}" == "-" ]]; then
   echo "note: signing ad-hoc. macOS ties the Accessibility grant to this build, so" >&2
   echo "      updating the app requires granting it again. Set CODE_SIGN_IDENTITY to" >&2
