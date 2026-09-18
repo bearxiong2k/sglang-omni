@@ -1,0 +1,67 @@
+{
+  "before": "524a3843266d6c14e0b85bfdc4f9c4ec9a4ec49b",
+  "after": "fa5305ca73b648de37ab08db90ee454099be231f",
+  "capture": "Native window screenshots; production views with isolated sample data and a local fixture worker. The comparison window title is fixture-only. No microphone, real API key, or external model service was used.",
+  "images": [
+    {
+      "file": "model-after.jpg",
+      "width": 1047,
+      "height": 768,
+      "sha256": "54a07f0e00efc8c6a0e3081fba95f56ebcc2af2ee73db0df622d961e2b498f12"
+    },
+    {
+      "file": "model-before.jpg",
+      "width": 1060,
+      "height": 750,
+      "sha256": "b49f29b9caaa1f96b34ae5a23b3e818695e01e6d951c547ea80b1eaa0674a5b0"
+    },
+    {
+      "file": "notifications-after.jpg",
+      "width": 1047,
+      "height": 768,
+      "sha256": "db7a578d1ce2133c65ec7f4fe3f67d897bcb610f1da10f2799622dd8feddf2e7"
+    },
+    {
+      "file": "notifications-before.jpg",
+      "width": 1060,
+      "height": 750,
+      "sha256": "0f4f4479972e31be090c3ec40147a055249a7ea90cb63a16bcc539d65c1d3e63"
+    },
+    {
+      "file": "popup-after.jpg",
+      "width": 460,
+      "height": 190,
+      "sha256": "6af49d8a22c651a738936da8590d08b0d65ccc5ec946ab4fdcf824ef235da934"
+    },
+    {
+      "file": "popup-before.jpg",
+      "width": 460,
+      "height": 190,
+      "sha256": "0cbda2efa554a344a2c4082d4c3b682a6c173e6a6ca76e15d571d1a54cf7cae5"
+    },
+    {
+      "file": "scrolled-after.jpg",
+      "width": 1047,
+      "height": 768,
+      "sha256": "df92f91a7946132ce97a2a55311f6310808d3153487d8497a6160d2054d4ba73"
+    },
+    {
+      "file": "scrolled-before.jpg",
+      "width": 1060,
+      "height": 750,
+      "sha256": "b49f29b9caaa1f96b34ae5a23b3e818695e01e6d951c547ea80b1eaa0674a5b0"
+    },
+    {
+      "file": "settings-after.jpg",
+      "width": 1047,
+      "height": 768,
+      "sha256": "9e421c2b064a65c0a36b05c446b9334067a9068a7fd01ccdf3ca05d65e4aef7a"
+    },
+    {
+      "file": "settings-before.jpg",
+      "width": 1060,
+      "height": 750,
+      "sha256": "5b7a2f2a9ab29229965a1423494e57b9ad2bb1721f2e93dc874bbef049feb792"
+    }
+  ]
+}
