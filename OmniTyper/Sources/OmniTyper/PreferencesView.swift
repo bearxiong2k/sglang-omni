@@ -4,6 +4,7 @@ import ServiceManagement
 import SwiftUI
 
 struct PreferencesView: View {
+    static let textAPISection = "textAPISettings"
     @ObservedObject var model: AppModel
     @ObservedObject var store: AppStore
     @ViewState private var microphones: [MicrophoneDevice] = []
@@ -20,11 +21,9 @@ struct PreferencesView: View {
                         Text(L("settings.shortcut")); Spacer()
                         Button(model.isCapturingShortcut ? L("settings.pressCombo") : model.shortcutLabel) { captureShortcut() }
                             .font(.system(.body, design: .monospaced)).disabled(model.isBusy)
-                        Button(L("action.reset")) { store.preferences.shortcutKeyCode = 49; store.preferences.shortcutModifiers = 786432 }
-                            .disabled(model.isBusy)
+                        Button(L("action.reset")) { store.preferences.shortcutKeyCode = 49; store.preferences.shortcutModifiers = 786432 }.disabled(model.isBusy)
                     }
-                    Toggle(L("settings.holdToTalk"), isOn: $store.preferences.holdToTalk)
-                    Text(L("settings.holdNote")).font(.caption).foregroundStyle(.secondary)
+                    Text(L("settings.simpleShortcutNote")).font(.caption).foregroundStyle(.secondary)
                     Divider()
                     Picker(L("settings.microphone"), selection: $store.preferences.microphoneUID) {
                         Text(L("settings.systemDefault")).tag("")
@@ -58,7 +57,7 @@ struct PreferencesView: View {
                     Text("Qwen3-ASR · 0.6B · MLX 4-bit").font(.subheadline)
                     Text(L("settings.modelNote")).font(.caption).foregroundStyle(.secondary)
                     Toggle(L("settings.keepModelLoaded"), isOn: Binding(
-                        get: { store.preferences.keepModelLoaded == true }, set: { model.setKeepModelLoaded($0) }
+                        get: { store.preferences.retainsSpeechModel }, set: { model.setKeepModelLoaded($0) }
                     )).disabled(model.isBusy)
                     Text(L("settings.keepModelLoadedNote")).font(.caption).foregroundStyle(.secondary)
                     HStack {
@@ -66,8 +65,8 @@ struct PreferencesView: View {
                         Button(L("settings.unloadASR")) { model.setKeepModelLoaded(false) }.disabled(model.isBusy)
                     }
                     DisclosureGroup(L("settings.runtime")) {
-                        TextField(L("settings.python"), text: $store.preferences.pythonExecutable).textFieldStyle(.roundedBorder).padding(.top, 8)
-                            .disabled(model.isBusy || model.isPreloading)
+                        TextField(L("settings.python"), text: $store.preferences.pythonExecutable)
+                            .textFieldStyle(.roundedBorder).padding(.top, 8).disabled(model.isBusy || model.isPreloading)
                         Text(L("settings.runtimeNote")).font(.caption).foregroundStyle(.secondary)
                     }
                     Text(L("settings.downloadNote")).font(.caption).foregroundStyle(.secondary)
@@ -101,7 +100,7 @@ struct PreferencesView: View {
                     }
                     Text(L("settings.privacyNote")).font(.caption).foregroundStyle(.secondary)
                 }
-            }
+            }.id(Self.textAPISection)
             Card {
                 VStack(alignment: .leading, spacing: 15) {
                     Label(L("settings.privacyHistory"), systemImage: "lock.shield").font(.headline)
