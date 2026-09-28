@@ -65,6 +65,7 @@ struct PreferencesView: View {
                         Button(L("settings.prepareASR")) { model.prepareModels() }.buttonStyle(.borderedProminent).disabled(model.isBusy || model.isPreloading)
                         Button(L("settings.unloadASR")) { model.setKeepModelLoaded(false) }.disabled(model.isBusy)
                     }
+                    if model.phase == .preparing || model.isPreloading { PreparationCard(model: model, worker: model.worker) }
                     DisclosureGroup(L("settings.runtime")) {
                         TextField(L("settings.python"), text: $store.preferences.pythonExecutable).textFieldStyle(.roundedBorder).padding(.top, 8)
                             .disabled(model.isBusy || model.isPreloading)
