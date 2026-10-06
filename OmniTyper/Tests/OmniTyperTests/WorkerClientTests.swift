@@ -284,6 +284,8 @@ struct WorkerClientTests {
             let replacement = try await harness.start("ready")
             let replacementChildPID = try #require(replacement.child)
             #expect(replacement.worker != started.worker)
+            #expect(Darwin.kill(started.worker, 0) != 0, "Replacement must wait for the previous worker to exit")
+            #expect(Darwin.kill(childPID, 0) != 0, "Replacement must wait for the previous model server to exit")
             let marker = harness.directory.appendingPathComponent("\(started.worker).json")
             #expect(try await harness.waitUntil { FileManager.default.fileExists(atPath: marker.path) })
             let cleanup = try #require(JSONSerialization.jsonObject(with: Data(contentsOf: marker)) as? [String: Any])
@@ -295,8 +297,6 @@ struct WorkerClientTests {
             #expect(cleanup["stdout_bytes"] as? Int == 131_072, "The parent must keep draining stdout past one pipe buffer")
             #expect(cleanup["stderr_bytes"] as? Int == 131_072, "The parent must keep draining stderr past one pipe buffer")
             #expect(cleanup["error"] == nil)
-            #expect(try await harness.waitUntil { Darwin.kill(started.worker, 0) != 0 })
-            #expect(Darwin.kill(childPID, 0) != 0, "The worker must finish reaping its descendant")
             #expect(client.isRunning, "An old worker's exit must not stop its replacement")
             client.stop()
             #expect(try await harness.waitUntil { Darwin.kill(replacement.worker, 0) != 0 })
@@ -308,14 +308,24 @@ struct WorkerClientTests {
     func testShutdownKillsUnresponsiveWorker() async throws {
         guard let harness = try ShutdownHarness(gracePeriod: 500_000_000) else { return }
         defer { harness.tearDown() }
-        let unresponsive = try await harness.start("ignore_term")
-        let stoppedAt = Date()
-        harness.client.stop()
-        try await Task.sleep(nanoseconds: 100_000_000)
-        #expect(Darwin.kill(unresponsive.worker, 0) == 0, "Allow the worker its graceful shutdown interval")
-        #expect(try await harness.waitUntil { Darwin.kill(unresponsive.worker, 0) != 0 },
-                "A worker ignoring SIGTERM must still be killed after the grace period")
-        #expect(Date().timeIntervalSince(stoppedAt) >= 0.4)
+        for cancelRequest in [false, true] {
+            let unresponsive = try await harness.start("ignore_term")
+            let stoppedAt = Date()
+            harness.client.stop()
+            let replacement = Task { try await harness.start("ready") }
+            try await Task.sleep(nanoseconds: 100_000_000)
+            #expect(Darwin.kill(unresponsive.worker, 0) == 0, "Allow the worker its graceful shutdown interval")
+            if cancelRequest { replacement.cancel() }
+            else { harness.client.stop() }
+            do {
+                _ = try await replacement.value
+                Issue.record("A stopped or cancelled request must not launch a replacement after cleanup")
+            } catch { #expect(error is CancellationError) }
+            #expect(!harness.client.isRunning)
+            #expect(try await harness.waitUntil { Darwin.kill(unresponsive.worker, 0) != 0 },
+                    "A worker ignoring SIGTERM must still be killed after the grace period")
+            #expect(Date().timeIntervalSince(stoppedAt) >= 0.4)
+        }
     }
 }
 

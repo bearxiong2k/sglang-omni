@@ -407,6 +407,7 @@ final class AppModel: ObservableObject {
         let preferences = store.preferences
         let preparation = Task {
             defer {
+                // Note (Codex): A cancelled preload must not clear its replacement.
                 if !Task.isCancelled { preloadTask = nil }
             }
             do {
@@ -458,6 +459,7 @@ final class AppModel: ObservableObject {
     }
 
     func cancel(releaseModel: Bool = false) {
+        // Note (Codex): Cancelling capture keeps preparation running so the next recording starts warm.
         let releaseWorker = releaseModel || Self.cancelReleasesWorker(phase)
         generation = UUID(); task?.cancel(); task = nil
         speechStream?.cancel(); speechStream = nil; liveText = ""; liveStatus = ""
