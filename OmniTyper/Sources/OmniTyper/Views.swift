@@ -58,7 +58,22 @@ struct RootView: View {
                     }.padding(32).frame(maxWidth: 940, alignment: .leading).frame(maxWidth: .infinity)
                 }
                 .overlay(alignment: .topTrailing) {
-                    notificationLayer.frame(maxWidth: 520).padding(16)
+                    VStack(spacing: 10) {
+                        if !store.storageError.isEmpty {
+                            message(store.storageError, error: true) { store.storageError = "" }
+                        }
+                        if !model.error.isEmpty {
+                            message(model.error, error: true, retry: model.canRetry) { model.error = "" }
+                        }
+                        if !model.notice.isEmpty {
+                            message(model.notice, error: false) { model.notice = "" }
+                        }
+                        if (model.phase == .preparing || model.isPreloading) && !page.placesOwnPreparationProgress {
+                            PreparationCard(model: model, worker: model.worker)
+                                .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
+                                .shadow(color: .black.opacity(0.12), radius: 10, y: 4)
+                        }
+                    }.frame(maxWidth: 520).padding(16)
                 }
             }
         }
@@ -113,25 +128,6 @@ struct RootView: View {
                 }.foregroundStyle(.tertiary)
             }.padding(18)
         }.frame(width: 218).background(cardBackground.opacity(0.48))
-    }
-
-    private var notificationLayer: some View {
-        VStack(spacing: 10) {
-            if !store.storageError.isEmpty {
-                message(store.storageError, error: true) { store.storageError = "" }
-            }
-            if !model.error.isEmpty {
-                message(model.error, error: true, retry: model.canRetry) { model.error = "" }
-            }
-            if !model.notice.isEmpty {
-                message(model.notice, error: false) { model.notice = "" }
-            }
-            if (model.phase == .preparing || model.isPreloading) && !page.placesOwnPreparationProgress {
-                PreparationCard(model: model, worker: model.worker)
-                    .background(.regularMaterial, in: RoundedRectangle(cornerRadius: 14))
-                    .shadow(color: .black.opacity(0.12), radius: 10, y: 4)
-            }
-        }
     }
 
     private func message(_ text: String, error: Bool, retry: Bool = false, dismiss: @escaping () -> Void) -> some View {
@@ -324,7 +320,7 @@ struct VoicePanel: View {
                             .font(.system(size: 10)).foregroundStyle(.secondary).lineLimit(1)
                     }
                     Spacer(minLength: 0)
-                }.background(WindowDragArea()).help(L("panel.dragHint"))
+                }.overlay(WindowDragArea()).help(L("panel.dragHint"))
                 HStack(spacing: 0) {
                     if model.phase == .recording {
                         Button { model.finish() } label: { Image(systemName: "stop.fill").foregroundStyle(accent) }.accessibilityLabel(L("home.finish"))

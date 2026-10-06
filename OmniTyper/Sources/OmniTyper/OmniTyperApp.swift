@@ -12,7 +12,7 @@ struct OmniTyperApp: App {
 final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMenuDelegate {
     private var model: AppModel!
     private var window: NSWindow!
-    private var panel: RecordingPanel!
+    private var panel: NSPanel!
     private var statusItem: NSStatusItem!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
@@ -94,7 +94,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate, NSMe
     private func showPanel() {
         let needsPlacement = panel == nil
         if panel == nil {
-            panel = RecordingPanel(contentRect: NSRect(x: 0, y: 0, width: 460, height: 190),
+            panel = NSPanel(contentRect: NSRect(x: 0, y: 0, width: 460, height: 190),
                             styleMask: [.nonactivatingPanel, .borderless], backing: .buffered, defer: false)
             panel.level = .floating; panel.isOpaque = false; panel.backgroundColor = .clear
             panel.hasShadow = true; panel.hidesOnDeactivate = false
@@ -135,45 +135,28 @@ final class VoicePanelHostingView: NSHostingView<VoicePanel> {
     override var needsPanelToBecomeKey: Bool { false }
 }
 
-final class RecordingPanel: NSPanel {
-    let dragRegions = NSHashTable<NSView>.weakObjects()
-    private var dragStart: (pointer: NSPoint, origin: NSPoint)?
-
-    override func sendEvent(_ event: NSEvent) {
-        switch event.type {
-        case .leftMouseDown:
-            dragStart = nil
-            if dragRegions.allObjects.contains(where: { view in
-                view.window === self && !view.isHiddenOrHasHiddenAncestor
-                    && view.bounds.intersection(view.visibleRect).contains(view.convert(event.locationInWindow, from: nil))
-            }) {
-                dragStart = (convertPoint(toScreen: event.locationInWindow), frame.origin)
-                return
-            }
-        case .leftMouseDragged:
-            if let dragStart {
-                let pointer = convertPoint(toScreen: event.locationInWindow)
-                setFrameOrigin(NSPoint(x: dragStart.origin.x + pointer.x - dragStart.pointer.x,
-                                       y: dragStart.origin.y + pointer.y - dragStart.pointer.y))
-                return
-            }
-        case .leftMouseUp:
-            if dragStart != nil { dragStart = nil; return }
-        default: break
-        }
-        super.sendEvent(event)
-    }
-}
-
 struct WindowDragArea: NSViewRepresentable {
     func makeNSView(context: Context) -> DragView { DragView() }
     func updateNSView(_ view: DragView, context: Context) {}
 
     final class DragView: NSView {
-        override func viewDidMoveToWindow() {
-            super.viewDidMoveToWindow()
-            (window as? RecordingPanel)?.dragRegions.add(self)
+        private var dragStart: (pointer: NSPoint, origin: NSPoint)?
+
+        override func acceptsFirstMouse(for event: NSEvent?) -> Bool { true }
+        override var needsPanelToBecomeKey: Bool { false }
+
+        override func mouseDown(with event: NSEvent) {
+            guard let window else { return }
+            dragStart = (window.convertPoint(toScreen: event.locationInWindow), window.frame.origin)
         }
-        override func hitTest(_ point: NSPoint) -> NSView? { nil }
+
+        override func mouseDragged(with event: NSEvent) {
+            guard let window, let dragStart else { return }
+            let pointer = window.convertPoint(toScreen: event.locationInWindow)
+            window.setFrameOrigin(NSPoint(x: dragStart.origin.x + pointer.x - dragStart.pointer.x,
+                                          y: dragStart.origin.y + pointer.y - dragStart.pointer.y))
+        }
+
+        override func mouseUp(with event: NSEvent) { dragStart = nil }
     }
 }
