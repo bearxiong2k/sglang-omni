@@ -317,4 +317,4 @@
 "control.expanded" = "Expanded";
 "control.collapsed" = "Collapsed";
 "settings.keepModelLoaded" = "Keep the speech model loaded";
-"settings.keepModelLoadedNote" = "Preload at launch and keep the model in memory between recordings for a faster start. Turn off to release it when idle; the next recording will load it again.";
+"settings.keepModelLoadedNote" = "Preload at launch and keep the model in memory between recordings for a faster start. Turn off to unload it now and after completed recordings. Cancelling capture keeps the model ready.";

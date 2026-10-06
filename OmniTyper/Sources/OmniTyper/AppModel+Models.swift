@@ -12,8 +12,13 @@ extension AppModel {
     func prepareModels() {
         guard phase == .idle, preloadTask == nil else { return }
         error = ""; notice = ""
+        _ = prepareSpeechModel()
+    }
+
+    func prepareSpeechModel() -> Task<[String: Any], Error> {
+        if let preloadTask { return preloadTask }
         let preferences = store.preferences
-        preloadTask = Task {
+        let preparation = Task {
             defer {
                 if !Task.isCancelled { preloadTask = nil }
             }
@@ -27,6 +32,8 @@ extension AppModel {
                 throw error
             }
         }
+        preloadTask = preparation
+        return preparation
     }
 
     func stopModelWorker() {

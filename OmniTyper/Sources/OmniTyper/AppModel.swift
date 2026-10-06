@@ -107,7 +107,25 @@ final class AppModel: ObservableObject {
                            if self.phase == .recording { self.finish() }
                            else if self.phase == .starting { self.cancel() }
                        },
-                       onCancel: { [weak self] in if self?.isBusy == true { self?.cancel() } })
+                       onCancel: { [weak self] in
+                           guard let self, !self.isCapturingShortcut, !self.isShutDown else { return }
+                           let backgroundPreparation = self.phase == .idle && self.isPreloading
+                           guard Self.escapeCancels(backgroundPreparation ? .preparing : self.phase,
+                                                    appIsActive: NSApp.isActive) else { return }
+                           self.cancel(releaseModel: backgroundPreparation)
+                       })
+    }
+
+    nonisolated static func escapeCancels(_ phase: Phase, appIsActive: Bool) -> Bool {
+        switch phase {
+        case .starting, .recording: return true
+        case .processing, .preparing: return appIsActive
+        case .idle: return false
+        }
+    }
+
+    nonisolated static func cancelReleasesWorker(_ phase: Phase) -> Bool {
+        phase == .processing || phase == .preparing
     }
 
     func beginShortcutCapture() {
@@ -180,17 +198,13 @@ final class AppModel: ObservableObject {
         lastApp = target?.applicationName ?? "OmniTyper"
         do { _ = try payload(audio: nil) }
         catch { self.error = error.localizedDescription; showMainWindow?(); return }
+        let preparation = prepareSpeechModel()
         phase = .starting
         showVoicePanel?()
         let token = UUID(); generation = token
         task = Task { [self] in
             do {
-                let response: [String: Any]
-                if let preloadTask { response = try await preloadTask.value }
-                else {
-                    response = try await worker.request(["op": "prepare", "asr_model": sessionPreferences.asrModel],
-                                                        python: sessionPreferences.pythonExecutable)
-                }
+                let response = try await preparation.value
                 guard generation == token, !Task.isCancelled else { return }
                 do {
                     let stream = try ASRStream(url: response["realtime_url"] as? String ?? "", onPartial: { [weak self] text in
@@ -376,13 +390,12 @@ final class AppModel: ObservableObject {
     }
 
     func cancel(releaseModel: Bool = false) {
-        let keepModel = !releaseModel && store.preferences.keepModelLoaded == true
-        let interruptsWorker = worker.hasPendingRequest && preloadTask == nil
+        let releaseWorker = releaseModel || Self.cancelReleasesWorker(phase)
         generation = UUID(); task?.cancel(); task = nil
         speechStream?.cancel(); speechStream = nil; liveText = ""; liveStatus = ""
         recorder.cancel(); target = nil; phase = .idle; hideVoicePanel?()
-        if !keepModel || interruptsWorker { stopModelWorker() }
-        if keepModel && !worker.isRunning { prepareModels() }
+        if releaseWorker { stopModelWorker() }
+        if !releaseModel && store.preferences.keepModelLoaded == true && !worker.isRunning { prepareModels() }
         notice = L("notice.cancelled")
     }
 

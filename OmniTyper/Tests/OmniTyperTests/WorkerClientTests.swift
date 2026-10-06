@@ -127,6 +127,22 @@ struct WorkerClientTests {
             let model = AppModel(store: store)
             defer { model.shutdown() }
             #expect(!model.isPreloading && !model.worker.isRunning)
+            let preparation = model.prepareSpeechModel()
+            let sharedPreparation = model.prepareSpeechModel()
+            model.phase = .starting
+            model.cancel()
+            #expect(model.isPreloading, "Cancelling capture keeps a cold model loading even without retention")
+            let prepared = try await preparation.value
+            let shared = try await sharedPreparation.value
+            #expect(prepared["worker_pid"] as? Int == shared["worker_pid"] as? Int)
+            #expect(prepared["serial"] as? Int == shared["serial"] as? Int)
+            model.phase = .recording
+            model.cancel()
+            let retained = try await model.worker.request(["op": "echo"], python: python)
+            #expect(prepared["worker_pid"] as? Int == retained["worker_pid"] as? Int)
+            #expect(model.error.isEmpty && model.phase == .idle)
+            model.cancel(releaseModel: true)
+            #expect(!model.isPreloading && !model.worker.isRunning)
             model.setKeepModelLoaded(true)
             #expect(model.isPreloading && model.phase == .idle)
             model.cancel()
